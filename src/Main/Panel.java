@@ -1,8 +1,10 @@
 package Main;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-
-
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 
 public class Panel extends JPanel implements Runnable{
@@ -16,9 +18,12 @@ public class Panel extends JPanel implements Runnable{
     private int squareY = 50;
     private int squareW = 20;
     private int squareH = 20;
+    private BufferedImage image;
     Thread gameThread;
     KeyHandler kHandler;
-    long waitTime;// delta time
+    long waitTimeMs;
+
+
     public Panel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
@@ -38,8 +43,8 @@ public class Panel extends JPanel implements Runnable{
     @Override
     public void run() {
         this.add(new JLabel("Ciao!"));
-        // measure the time each frame takes, then sleep for the remaining time until 16.67 ms have elapsed.
-        final double timePerFrame = 1_000_000_000 / 60.0;// 16.67 ms for 60FPS
+        // Because we want a fixed 120 fps, we measure the time each frame takes, then sleep for the remaining time until 8.3 ms have elapsed.
+        final double timePerFrame = 1_000_000_000 / 120.0;// 8.3 ms for 120FPS
         while (gameThread != null){
             long startTime = System.nanoTime();
 
@@ -47,14 +52,14 @@ public class Panel extends JPanel implements Runnable{
             repaint();
             // frame rendered so now we measure how much time it took
             long elapsed = System.nanoTime() - startTime;
-            waitTime = (long)(timePerFrame - elapsed) / 1_000_000; // convert to ms
+            waitTimeMs = (long)(timePerFrame - elapsed) / 1_000_000; // Delta time in ms to sleep
 
-            if (waitTime < 0) {
-                waitTime = 5; // minimal wait to prevent tight looping if behind schedule
-            }
+            if (waitTimeMs < 0) // if the frame rendered in more that timePerFrame, then it shouldn't wait
+                waitTimeMs = 0;
+
 
             try {
-                Thread.sleep(waitTime);
+                Thread.sleep(waitTimeMs);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -65,15 +70,32 @@ public class Panel extends JPanel implements Runnable{
 
     public void update(){
         System.out.println(squareX + "," + squareY);
-        double deltaTime = waitTime / 10.0;
-        if (kHandler.upPressed)
+        double deltaTime = waitTimeMs / 10.0; // actual DT in nanoseconds,  used to make the speed of the player consistent across all fps
+        File input_file = new File("src/Walking sprites/boy_down_1.png");;
+        try {
+        if (kHandler.upPressed) {
             squareY -= 5 * deltaTime;
-        if (kHandler.rightPressed)
+            input_file = new File("src/Walking sprites/boy_up_1.png");
+        }
+        if (kHandler.rightPressed) {
             squareX += 5 * deltaTime;
-        if (kHandler.leftPressed)
+            input_file = new File("src/Walking sprites/boy_right_1.png");
+        }
+        if (kHandler.leftPressed) {
             squareX -= 5 * deltaTime;
-        if (kHandler.downPressed)
+            input_file = new File("src/Walking sprites/boy_left_1.png");
+        }
+        if (kHandler.downPressed) {
             squareY += 5 * deltaTime;
+
+        }
+        image = new BufferedImage(
+                scaledtileSize, scaledtileSize, BufferedImage.TYPE_INT_ARGB);
+        image = ImageIO.read(input_file);
+        }
+        catch (IOException e) {
+            System.out.println("Error: " + e);
+        }
     }
 
     @Override
@@ -82,8 +104,7 @@ public class Panel extends JPanel implements Runnable{
         super.paintComponent(g); // to recall the original method
         g.drawString("This is my custom Panel!",10,20);
         Graphics2D g2 = (Graphics2D)g;
-        g2.fillRect(squareX, squareY, squareW, squareH);
-        g2.dispose();
+        g2.drawImage(image, squareX, squareY, null);
     }
 }
 
