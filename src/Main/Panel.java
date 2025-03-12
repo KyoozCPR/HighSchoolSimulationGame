@@ -19,6 +19,7 @@ public class Panel extends JPanel implements Runnable{
     private int squareW = 20;
     private int squareH = 20;
     private BufferedImage image;
+    File input_file;
     Thread gameThread;
     KeyHandler kHandler;
     long waitTimeMs;
@@ -31,7 +32,7 @@ public class Panel extends JPanel implements Runnable{
         this.setFocusable(true);
         this.kHandler = new KeyHandler();
         this.addKeyListener(kHandler);
-
+        this.input_file = new File("src/Walking sprites/boy_down_1.png");
 
     }
 
@@ -71,7 +72,7 @@ public class Panel extends JPanel implements Runnable{
     public void update(){
         System.out.println(squareX + "," + squareY);
         double deltaTime = waitTimeMs / 10.0; // actual DT in nanoseconds,  used to make the speed of the player consistent across all fps
-        File input_file = new File("src/Walking sprites/boy_down_1.png");;
+
         try {
         if (kHandler.upPressed) {
             squareY -= 5 * deltaTime;
@@ -87,8 +88,9 @@ public class Panel extends JPanel implements Runnable{
         }
         if (kHandler.downPressed) {
             squareY += 5 * deltaTime;
-
+            input_file = new File("src/Walking sprites/boy_down_1.png");
         }
+
         image  = new BufferedImage(
                 scaledtileSize, scaledtileSize, BufferedImage.TYPE_INT_ARGB);
 
@@ -107,6 +109,7 @@ public class Panel extends JPanel implements Runnable{
         g.drawString("This is my custom Panel!",10,20);
         Graphics2D g2 = (Graphics2D)g;
         g2.drawImage(image, squareX, squareY,scaledtileSize, scaledtileSize, null);
+        setDoubleBuffered(true);
     }
 }
 
