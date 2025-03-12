@@ -89,9 +89,11 @@ public class Panel extends JPanel implements Runnable{
             squareY += 5 * deltaTime;
 
         }
-        image = new BufferedImage(
+        image  = new BufferedImage(
                 scaledtileSize, scaledtileSize, BufferedImage.TYPE_INT_ARGB);
+
         image = ImageIO.read(input_file);
+
         }
         catch (IOException e) {
             System.out.println("Error: " + e);
@@ -104,7 +106,7 @@ public class Panel extends JPanel implements Runnable{
         super.paintComponent(g); // to recall the original method
         g.drawString("This is my custom Panel!",10,20);
         Graphics2D g2 = (Graphics2D)g;
-        g2.drawImage(image, squareX, squareY, null);
+        g2.drawImage(image, squareX, squareY,scaledtileSize, scaledtileSize, null);
     }
 }
 
