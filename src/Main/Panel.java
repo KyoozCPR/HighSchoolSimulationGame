@@ -1,4 +1,6 @@
 package Main;
+import Entity.Player;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -9,30 +11,31 @@ import java.io.IOException;
 
 public class Panel extends JPanel implements Runnable{
     //we need to scale the pixels
-    final int scaledtileSize = 48; // 16x16px scaled tile
-    final int maxScreenCol = 16; // X axis
-    final int maxScreenRow = 12; //
+    public final int scaledtileSize = 32*3; // 32x32px scaled tile
+    final int maxScreenCol = 20; // X axis
+    final float maxScreenRow = 11.25F; // Y
     final int screenWidth = maxScreenCol * scaledtileSize;
-    final int screenHeight = maxScreenRow * scaledtileSize;
-    private int squareX = 50;
-    private int squareY = 50;
-    private int squareW = 20;
-    private int squareH = 20;
-    private BufferedImage image;
-    File input_file;
+    final int screenHeight = (int) (maxScreenRow * scaledtileSize);
+    private int squareX;
+    private int squareY;
+    public Player player;
     Thread gameThread;
     KeyHandler kHandler;
     long waitTimeMs;
 
 
     public Panel(){
+
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(Color.BLACK);
+        this.setBackground(Color.WHITE);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
         this.kHandler = new KeyHandler();
         this.addKeyListener(kHandler);
-        this.input_file = new File("src/Walking sprites/boy_down_1.png");
+        this.squareX = (screenWidth/2)-32;
+        this.squareY = (screenHeight/2)-32;
+        this.player = new Player(squareX,squareY,this, this.kHandler);
+
 
     }
 
@@ -72,43 +75,16 @@ public class Panel extends JPanel implements Runnable{
     public void update(){
         System.out.println(squareX + "," + squareY);
         double deltaTime = waitTimeMs / 10.0; // actual DT in nanoseconds,  used to make the speed of the player consistent across all fps
+        player.update(deltaTime);
 
-        try {
-        if (kHandler.upPressed) {
-            squareY -= 5 * deltaTime;
-            input_file = new File("src/Walking sprites/boy_up_1.png");
-        }
-        if (kHandler.rightPressed) {
-            squareX += 5 * deltaTime;
-            input_file = new File("src/Walking sprites/boy_right_1.png");
-        }
-        if (kHandler.leftPressed) {
-            squareX -= 5 * deltaTime;
-            input_file = new File("src/Walking sprites/boy_left_1.png");
-        }
-        if (kHandler.downPressed) {
-            squareY += 5 * deltaTime;
-            input_file = new File("src/Walking sprites/boy_down_1.png");
-        }
-
-        image  = new BufferedImage(
-                scaledtileSize, scaledtileSize, BufferedImage.TYPE_INT_ARGB);
-
-        image = ImageIO.read(input_file);
-
-        }
-        catch (IOException e) {
-            System.out.println("Error: " + e);
-        }
     }
 
     @Override
     //JComponent method to paint, overridden for custom components
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // to recall the original method
-        g.drawString("This is my custom Panel!",10,20);
         Graphics2D g2 = (Graphics2D)g;
-        g2.drawImage(image, squareX, squareY,scaledtileSize, scaledtileSize, null);
+        player.draw(g2); //draw the player image
         setDoubleBuffered(true);
     }
 }
