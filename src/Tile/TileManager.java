@@ -3,8 +3,7 @@ package Tile;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class TileManager {
     public Tile[] tileset;
@@ -14,6 +13,8 @@ public class TileManager {
         setTileset();
         setTileMap();
     }
+
+
 
 
     // retrieve tile images from Maps directory, creating new Tiles in the tileMap
@@ -35,4 +36,23 @@ public class TileManager {
         }
 
     }
+
+    private void setTileMap() {
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader("map_represetation.txt"));
+            int j=0;
+            while (reader.readLine() != null){
+                String[] id = reader.readLine().split(" ");
+                for (int i=0; i< id.length; i++)
+                    tilemap[i][j] = tileset[Integer.parseInt(id[i])];
+                j++;
+
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
+

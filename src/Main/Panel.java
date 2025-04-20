@@ -84,6 +84,7 @@ public class Panel extends JPanel implements Runnable{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // to recall the original method
         Graphics2D g2 = (Graphics2D)g;
+
         player.draw(g2); //draw the player image
         setDoubleBuffered(true);
     }
