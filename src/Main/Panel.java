@@ -1,5 +1,6 @@
 package Main;
 import Entity.Player;
+import Tile.TileManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,12 +20,13 @@ public class Panel extends JPanel implements Runnable{
     private int squareX;
     private int squareY;
     public Player player;
+    public TileManager tileset;
     Thread gameThread;
     KeyHandler kHandler;
     long waitTimeMs;
 
 
-    public Panel(){
+    public Panel() throws IOException {
 
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.WHITE);
@@ -35,6 +37,7 @@ public class Panel extends JPanel implements Runnable{
         this.squareX = (screenWidth/2)-32;
         this.squareY = (screenHeight/2)-32;
         this.player = new Player(squareX,squareY,this, this.kHandler);
+        this.tileset = new TileManager(this);
 
 
     }
@@ -84,7 +87,7 @@ public class Panel extends JPanel implements Runnable{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // to recall the original method
         Graphics2D g2 = (Graphics2D)g;
-
+        tileset.draw(g2);
         player.draw(g2); //draw the player image
         setDoubleBuffered(true);
     }
