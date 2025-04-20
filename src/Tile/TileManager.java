@@ -16,7 +16,7 @@ public class TileManager {
     }
 
 
-    // retrieve tile images from spritesheet.png by separating them into 32x32px tiles
+    // retrieve tile images from Maps directory, creating new Tiles in the tileMap
     private void setTileset() throws IOException {
         this.tileset = new Tile[10];
         File[] tilesDirectory = new File("src/Maps").listFiles();
