@@ -76,7 +76,7 @@ public class Panel extends JPanel implements Runnable{
     }
 
     public void update(){
-        System.out.println(squareX + "," + squareY);
+
         double deltaTime = waitTimeMs / 10.0; // actual DT in nanoseconds,  used to make the speed of the player consistent across all fps
         player.update(deltaTime);
 

@@ -52,6 +52,7 @@ public class Player extends Entity{
     }
 
     public void draw(Graphics2D g2){
+        System.out.println(super.x + ","+ super.y);
         g2.drawImage(image, super.x, super.y,gP.scaledtileSize, gP.scaledtileSize, null);
     }
 }

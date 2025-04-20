@@ -48,36 +48,41 @@ public class TileManager {
 
     private void setTileMap() {
         this.tilemap = new ArrayList<>();
-        try{
+        try {
             BufferedReader reader = new BufferedReader(new FileReader("src/Tile/map_rapresentation.txt"));
-
-            int j=0;
-            ArrayList<Tile> ids = new ArrayList<>();
-            while (reader.readLine() != null){
-                String[] id = reader.readLine().split(" ");
-                for (int i=0; i< id.length; i++)
+            String line; // used inside the condition otherwise it would call readline() 2 times per iteration
+            while ((line = reader.readLine()) != null){
+                ArrayList<Tile> ids = new ArrayList<>();
+                String[] id = line.split(" ");
+                for (int i=0; i<id.length; i++) {
+                    System.out.println(id[i]);
                     ids.add(tileset[Integer.parseInt(id[i])]);
+                }
                 tilemap.add(ids);
-                j++;
 
             }
+
             reader.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 
     }
 
     public void draw(Graphics2D g2){
 
-        int x=-32;
+        int x=-32*3;
         int y=0;
+
         for (int i=0; i<tilemap.size(); i++){
-            x+=32;
-            for (int j=0; j<tilemap.get(i).size(); j++){
-                g2.drawImage(tilemap.get(i).get(j).image, x+32, y, gP.scaledtileSize, gP.scaledtileSize, null);
+
+            for (int j=0; j<20; j++){
+                g2.drawImage(tilemap.get(i).get(j).image, x+=32*3, y, gP.scaledtileSize, gP.scaledtileSize, null);
             }
-            y+=32;
+            y+=32*3;
+            x=-32*3;
         }
     }
 }
